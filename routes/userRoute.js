@@ -24,17 +24,18 @@ const router = express.Router();
 //     storage : storage,
 //     fileFilter:filefilter
 // }); 
-const {signUPValidation} = require('../helpers/validation');
+const {signUPValidation,loginValidation} = require('../helpers/validation');
 const userController = require('../controllers/userController');
 // const { dir } = require('console');
+
 //const otpVerificationController = require('../controllers/otp_verification');
 
 
 // router.post('/register',//upload.single('logo')
 // ,signUPValidation,userController.register);
 router.post('/register',signUPValidation,userController.register);
+router.post('/verification',userController.otpVerification);
+router.post('/login', loginValidation, userController.login);
 
+module.exports = router;
 
-module.exports = {
-router,
-};
