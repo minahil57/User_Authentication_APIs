@@ -4,7 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser'); 
 const userRouter = require('./routes/userRoute');
-// const otpVeri = require('./controllers/otp_verification');
  
 const app = express();
 app.use(express.json());

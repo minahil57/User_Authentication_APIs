@@ -24,10 +24,15 @@ const sendMail = async(user_email , mailSubject , content) =>{
         
         transport.sendMail(mailOptions,function(error,info){
             if(error){
-                console.log(error);
+                return res.status(400).send({
+                    msg: err
+                });
             }
             else{
                 console.log('Mail sent successfully!',info.response);
+                return res.status(200).send({
+                    msg: 'Mail sent successfully!'
+                });
             }
 
         });
