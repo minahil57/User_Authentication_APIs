@@ -7,13 +7,17 @@ const userController = require('../controllers/userController');
 const { Menu, Category, Branch } = require('../controllers/menu'); // Import the Menu model here
 
 const menu = require('../controllers/menu');
+const order = require('../controllers/order');
+const check_res = require('../controllers/check_restaurant');
 
 router.post('/register', signUPValidation, userController.register);
 router.post('/verification', userController.otpVerification);
-router.post('/login', loginValidation, userController.login);
+router.post('/login',  userController.login);
 router.post('/resendotp', userController.resend);
+router.post('/check', check_res.check);
+router.get('/:restaurantName',menu.getMenusByRestaurantName );
+router.post('/order' , order.placeOrder);
 
-router.get('/:restaurantId',menu.getMenusByRestaurantId );
 // => {
 //   const restaurantId = req.params.restaurantId;
 

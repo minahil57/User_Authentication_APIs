@@ -10,7 +10,6 @@ const register = async (req, res) => {
     var full_name = req.body.full_name;
 
      console.log(req.body);
-    //var file_name = req.file.filename;
     //Password Hashing 
     const saltRounds = 10; // Number of salt rounds for bcrypt hashing
 
@@ -34,7 +33,7 @@ const register = async (req, res) => {
             `SELECT * FROM user_credentials WHERE LOWER(user_email) = LOWER(${db.escape(
                 user_email
             )});`,
-            //console.log("hello"),
+            
             (err, result) => {
                 if (result && result.length) {
                     const user = result[0];
@@ -76,7 +75,6 @@ const register = async (req, res) => {
                                 [full_name, user_id],
                                 (err, result) => {
                                     if (err) {
-                                        console.log("sana");
                                         return res.status(500).send({
                                             msg: 'Error inserting data into customer_details',
                                             err,
@@ -158,16 +156,16 @@ const register = async (req, res) => {
                                    
 
                                     sendMail(user_email, mailSubject, content);
-                                    console.log("after mail");
+                                
                                     //OTP Save in database
                                     db.query('UPDATE user_credentials set token=? where user_email=?', [otp, user_email], function (error, result, fields) {
                                         if (error) {
-                                            console.log("mano g");
+                                            
                                             return res.status(400).send({
                                                 msg: err
                                             });
                                         } else {
-                                            console.log("mano haider done ");
+                                        
                                             return res.status(200).send({
                                                 msg: 'The User Has Been Registered'
                                             });
@@ -220,11 +218,11 @@ const register = async (req, res) => {
     const user_email = req.body.user_email;
     const user_password = req.body.user_password;
     //console.log(req.body);
-    const errors = validationResult(req);
+    // const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).json({ errors: errors.array() });
+    // }
 
     db.query(
         `SELECT * FROM user_credentials WHERE user_email = ${db.escape(user_email)};`,
@@ -269,6 +267,9 @@ const register = async (req, res) => {
                         if (bResult) {
                             return res.status(200).send({
                                 msg: 'Logged in',
+                                user_id: userRecord.user_id,
+                    
+
                             });
                         } else {
                             return res.status(401).send({

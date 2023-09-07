@@ -1,62 +1,81 @@
-
 const db = require('../config/dbconnection');
-const getMenusByRestaurantId = async (req, res) => {
-  var restaurantId = req.params.restaurantId;
-  
-  var query = `SELECT * FROM category WHERE restaurant_id = ?` ;
 
-  try{
-  db.query(query,[restaurantId],(err, result) => {
-    if (err) {
-      console.error('Error fetching data:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-    const responsePromises = result.map(result => {
-      const categoryId = result.category_id; // Assuming the reservations have a hostel_id column
-      console.log(categoryId);
-      const menuQuery = 'SELECT * FROM menu WHERE category_id = ?';
+const getMenusByRestaurantName = async (req, res) => {
+  const restaurantName = req.params.restaurantName;
+  console.log(req.body);
+  const restaurantQuery = 'SELECT * FROM restaurant WHERE resturant_name = ?';
+  const categoryQuery = 'SELECT * FROM category WHERE restaurant_id = ?';
+  const menuQuery = 'SELECT * FROM menu WHERE category_id = ?';
 
-      return new Promise((resolve, reject) => {
-        db.query(menuQuery, [categoryId], (err, menuDetails) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          if (menuDetails.length === 0) {
-            // Hostel details not found, resolve with an empty object
-            resolve({});
-          } else {
-            console.log(menuDetails);
-            
-            resolve({});
-            // const hostelName = hostelDetails[0].hostel_name;
-            // resolve({ ...reservation, hostel_name: hostelName });
-          }
-        });
-      });
-    });
-
-    Promise.all(responsePromises)
-      .then(responseData => {
-        console.log('hello');
-        res.status(200).json(responseData);
-      })
-      .catch(error => {
-        console.error('Error fetching hostel details:', error);
+  try {
+    db.query(restaurantQuery, [restaurantName], (err, restaurant) => {
+      if (err) {
+        console.error('Error fetching restaurant:', err);
         res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      if (restaurant.length === 0) {
+        res.status(404).json({ message: 'Restaurant not found' });
+        return;
+      }
+
+      var restaurantId = restaurant[0].resturant_id;
+      console.log(restaurantId);
+
+      db.query(categoryQuery, [restaurantId], (err, categories) => {
+        if (err) {
+          console.error('Error fetching categories:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+
+        if (categories.length === 0) {
+          res.status(404).json({ message: 'No categories found for the given restaurant' });
+          return;
+        }
+
+        const responsePromises = categories.map(category => {
+          const categoryId = category.category_id;
+          
+          return new Promise((resolve, reject) => {
+            db.query(menuQuery, [categoryId], (err, menuDetails) => {
+              if (err) {
+                reject(err);
+                return;
+              }
+              
+              const categoryWithMenu = {
+                ...category,
+                menu: menuDetails
+              };
+              console.log(categoryWithMenu);
+              
+              resolve(categoryWithMenu);
+            });
+          });
+        });
+
+        Promise.all(responsePromises)
+          .then(result => {
+            if (result.length === 0) {
+              res.status(404).json({ message: 'No menu items found for the given categories' });
+            } else {
+              res.status(200).json(result);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching menu details:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+          });
       });
     });
-  }
-     catch (error) {
+  } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
 
-
 module.exports = {
-  getMenusByRestaurantId,
+  getMenusByRestaurantName,
 };
-
