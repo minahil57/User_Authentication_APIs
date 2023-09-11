@@ -1,7 +1,7 @@
 const db = require('../config/dbconnection');
 
 exports.placeOrder = (req, res) => {
-    const { user_id, cart, total_price , resturant_id } = req.body;
+    const { user_id, cart, total_price,resturant_id} = req.body;
     console.log(req.body);
   
     // Start a transaction
@@ -15,7 +15,7 @@ exports.placeOrder = (req, res) => {
       db.query(orderQuery, [user_id, total_price, 'pending',resturant_id], (err, result) => {
         if (err) {
           db.rollback(() => {
-            res.status(500).json({ error: 'Data not Saved in Orders' });
+            res.status(501).json({ error: 'Data not Saved in Orders' });
           });
         } else {
           const orderId = result.insertId;
@@ -34,7 +34,7 @@ exports.placeOrder = (req, res) => {
             if (err) {
               db.rollback(() => {
                 console.log(err);
-                res.status(500).json({ error: 'Data not Saved in OrdersItems' });
+                res.status(502).json({ error: 'Data not Saved in OrdersItems' });
               });
             } else {
               // If all queries are successful, commit the transaction
@@ -42,10 +42,11 @@ exports.placeOrder = (req, res) => {
                 if (err) {
                   db.rollback(() => {
                     console.log(err);
-                    res.status(500).json({ error: 'Order placement failed' });
+                    res.status(503).json({ error: 'Order placement failed' });
                   });
                 } else {
-                  res.status(201).json({ message: 'Order placed successfully' });
+                  console.log(orderId);
+                  res.status(201).json({ order_id: orderId,message: 'Order placed successfully' });
                   console.log(res.body);
                 }
               });

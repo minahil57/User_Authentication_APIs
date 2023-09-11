@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors());
 
 // const corsOptions = {
 //     origin: 'https://wajba.com', // Change this to the allowed origin for your app
