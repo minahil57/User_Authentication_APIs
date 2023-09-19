@@ -10,7 +10,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors());
-
+const WebSocket = require('ws');
+const http = require('http'); 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 // const corsOptions = {
 //     origin: 'https://wajba.com', // Change this to the allowed origin for your app
 //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -29,6 +32,20 @@ app.use((err, _req, res, _next) => {
     res.status(err.statusCode).json({
         message: err.message,
     });
+});
+// WebSocket connections
+const clients = new Set(); // Store connected clients
+
+wss.on('connection', (ws) => {
+  clients.add(ws);
+
+  ws.on('message', (message) => {
+    // Handle WebSocket messages if needed
+  });
+
+  ws.on('close', () => {
+    clients.delete(ws);
+  });
 });
 
 app.listen(3000, () => console.log('Server is running on port 3000'));
