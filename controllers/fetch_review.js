@@ -5,6 +5,7 @@ const db = require('../config/dbconnection');
 const fetchReview = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
+    console.log(restaurantId);
 
     // Query to fetch all ratings for the given restaurant, including user_id and user_name
     const query = `
@@ -21,6 +22,7 @@ const fetchReview = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
         return;
       }
+      console.log(res.body);
 
       // 'results' contains the rows retrieved from the database
       res.json(results);

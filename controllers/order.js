@@ -1,7 +1,7 @@
 const db = require('../config/dbconnection');
 
 exports.placeOrder = (req, res) => {
-    const { user_id, cart, total_price,resturant_id} = req.body;
+    const { user_id, cart, total_price,resturant_id,table} = req.body;
     console.log(req.body);
   
     // Start a transaction
@@ -11,8 +11,8 @@ exports.placeOrder = (req, res) => {
       }
   
       // Step 1: Insert the order into the orders table
-      const orderQuery = 'INSERT INTO orders (user_id, total_price, status, created_at,resturant_id) VALUES (?, ?, ?, NOW(),?)';
-      db.query(orderQuery, [user_id, total_price, 'pending',resturant_id], (err, result) => {
+      const orderQuery = 'INSERT INTO orders (user_id, total_price, status, created_at,resturant_id,table_no) VALUES (?, ?, ?, NOW(),?,?)';
+      db.query(orderQuery, [user_id, total_price, 'pending',resturant_id,table], (err, result) => {
         if (err) {
           db.rollback(() => {
             res.status(501).json({ error: 'Data not Saved in Orders' });
