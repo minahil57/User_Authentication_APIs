@@ -15,6 +15,7 @@ const userDataController = require('../controllers/user_data_fetch');
 const reviewController = require('../controllers/review');
 const reviewFetchController = require('../controllers/fetch_review');
 const avgController = require('../controllers/avg');
+const changepassword = require('../controllers/changepassword');
 //const veriController = require('../controllers/otp');////
 
 router.post('/register', signUPValidation, userController.register);
@@ -30,5 +31,5 @@ router.get('/user/:user_id', userDataController.FetchUserData);
 router.post('/review' , reviewController.insertReview);
 router.get('/fetchreview/:restaurantId' , reviewFetchController.fetchReview);
 router.get('/avg/:restaurantId' , avgController.avg);
-
+router.put('/api/change-password/:id',changepassword.changepassword);
 module.exports = router;
