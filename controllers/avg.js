@@ -4,7 +4,7 @@ const db = require('../config/dbconnection');
 const avg = async (req, res) => {
   try {
     const restaurantId = req.params.restaurantId;
-
+    console.log(req.params);
     // Query to calculate the average rating for the given restaurant
     const query = `
       SELECT AVG(rating) AS average_rating

@@ -33,19 +33,5 @@ app.use((err, _req, res, _next) => {
         message: err.message,
     });
 });
-// WebSocket connections
-const clients = new Set(); // Store connected clients
-
-wss.on('connection', (ws) => {
-  clients.add(ws);
-
-  ws.on('message', (message) => {
-    // Handle WebSocket messages if needed
-  });
-
-  ws.on('close', () => {
-    clients.delete(ws);
-  });
-});
 
 app.listen(3000, () => console.log('Server is running on port 3000'));

@@ -2,6 +2,7 @@ const db = require('../config/dbconnection');
 
 const check = async (req, res) => {
   const { restaurantName } = req.body;
+  console.log(req.body);
 
   // SQL query to check if the restaurant name exists in the database
   const query = `SELECT * FROM restaurant WHERE resturant_name = ?`;
